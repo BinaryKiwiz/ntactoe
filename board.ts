@@ -1,15 +1,17 @@
 export default class Board{
+    parent: Board;
     children: Board[] = [];
     winner: string = "";
     level: number = 0;
 
-    constructor(n: number){
+    constructor(n: number, parent: Board = Object()){
         this.level = n;
+        this.parent = parent;
 
         if(n == 0){ return; }
 
         for(let i: number = 0; i < 9; i++){
-            this.children.push(new Board(n - 1));
+            this.children.push(new Board(n - 1, this));
         }
     }
 
@@ -50,5 +52,39 @@ export default class Board{
         }
 
         return false;
+    }
+
+    #checkWinner() : string{ // could be marginally optimized by checking all winning positions that use the middle square at once
+        // rows top, middle, bottom
+        if(this.children[0].winner && this.children[0].winner == this.children[1].winner && this.children[0].winner == this.children[2].winner){
+            return this.children[0].winner;
+        }
+        if(this.children[3].winner && this.children[3].winner == this.children[4].winner && this.children[3].winner == this.children[5].winner){
+            return this.children[0].winner;
+        }
+        if(this.children[6].winner && this.children[6].winner == this.children[7].winner && this.children[6].winner == this.children[8].winner){
+            return this.children[0].winner;
+        }
+
+        // columns left, middle, right
+        if(this.children[0].winner && this.children[0].winner == this.children[3].winner && this.children[0].winner == this.children[6].winner){
+            return this.children[0].winner;
+        }
+        if(this.children[1].winner && this.children[1].winner == this.children[4].winner && this.children[1].winner == this.children[7].winner){
+            return this.children[0].winner;
+        }
+        if(this.children[2].winner && this.children[2].winner == this.children[5].winner && this.children[2].winner == this.children[8].winner){
+            return this.children[0].winner;
+        }
+
+        // diagonals main and anti
+        if(this.children[0].winner && this.children[0].winner == this.children[4].winner && this.children[0].winner == this.children[8].winner){
+            return this.children[0].winner;
+        }
+        if(this.children[2].winner && this.children[2].winner == this.children[4].winner && this.children[2].winner == this.children[6].winner){
+            return this.children[0].winner;
+        }
+
+        return "";
     }
 }
